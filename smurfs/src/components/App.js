@@ -3,7 +3,6 @@ import axios from "axios"
 
 //contexts
 import {SmurfContext} from '../contexts/SmurfContext'
-import {FormContext} from '../contexts/FormContext'
 
 //components
 import SmurfForm from './SmurfForm'
@@ -15,14 +14,6 @@ import "./App.css";
 export default function App() {
   //current smurfs state
   const [smurfs, setSmurfs] = useState([]);
-  //new smurfs state
-  const [newSmurf, setNewSmurf] = useState(
-    {
-        name: '',
-        age: '',
-        height:''
-    }
-)
 
   //get request
   useEffect(() => {
@@ -36,16 +27,27 @@ export default function App() {
     })
   }, [])
 
+  //post request
+  const New = smurf => {
+    axios.post("http://localhost:3333/smurfs", smurf)
+    .then(response => {
+      console.log(response)
+      setSmurfs(response.data)
+    })
+    .catch(error => {
+      console.log("this is the post", error)
+    })
+  }
+
 
   return (
-    <div className="App">
-      <h1>Smurf App</h1>
-    <SmurfContext.Provider value={{smurfs, setSmurfs, setNewsmurf}}>
-      <FormContext.Provider>
-      <SmurfForm />
-      </FormContext.Provider>
-    </SmurfContext.Provider>  
-    </div>
-  )
+		<div className="App">
+      <h1>Smurfs App</h1>
+      <SmurfContext.Provider value={{smurfs, setSmurfs, New}}>
+        <SmurfForm />
+        <SmurfCard />
+      </SmurfContext.Provider>
+		</div>
+	);
 }
 
